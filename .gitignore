@@ -1,4 +1,4 @@
 # Project exclude paths
 /project/target/
 /target/
-extracted.csv
+Scratchpad.scala
