@@ -12,3 +12,4 @@ Questions to Answer:
 
 Severity of crash and roadway type?
 Severity of crash and time of year/time of day?
+Severity of crash and description format?
