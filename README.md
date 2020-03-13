@@ -3,6 +3,13 @@
 Original dataset:
 https://www.kaggle.com/sobhanmoosavi/us-accidents/version/3#
 
+Q1: Which states have the most accidents?
+Is there a correlation between the state and the severity of the accident?
+Similarly, what kind of roads have the most accidents?
+Is there a correlation between the type of road and the severity of the accident?
 
-Link to extracted csv file.
-https://cpslo-my.sharepoint.com/:u:/g/personal/jivanov_calpoly_edu/ESc1uUdKs9dJn7NOYmDZRXEB7IEGjitictqvCoHSqfPxHQ?e=08Dfc1
+Q2:
+
+Q3:
+
+Q4:
