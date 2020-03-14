@@ -33,36 +33,48 @@ object Q1 {
 
     val file = sc.textFile("accidents.csv")
     val header = file.first()
+
+    // Which states have the highest rate of accidents?
     val accidentsByState = file.filter(_ != header).map(line =>
-      (line.split(",")(14), line.split(",")(3).toDouble)
-    ).persist() // (state, severity)
+      (line.split(",")(14), 1)
+    ).persist() // (state, 1)
 
-    // Which states have the highest number of accidents? What is the average severity of the accidents?
-    accidentsByState.aggregateByKey((0.0, 0.0))(
-      (acc, value) => (acc._1 + value, acc._2 + 1),
-      (acc1, acc2) => (acc1._1 + acc2._1, acc1._2 + acc2._2)
-    ).map({case (state, (sum, count)) =>
-      (state, (count, sum / count))
-    }).sortBy({case (state, (count, avg)) =>
+    val topStates = accidentsByState.reduceByKey((x, y) =>
+      x + y
+    ).sortBy({case (state, count) =>
       -count
-    }).collect().foreach({case (state, (sum, count)) =>
-      println(f"$state  ${sum.toInt} $count%.2f")
     })
 
-    // Which road types have the highest number of accidents? What is the average severity of the accidents by road type?
+    // For each state, which roads have the highest rate of accidents? What is the average severity for each road type?
     val accidentsByRoad = file.filter(_ != header).map(line =>
-      (getRoadType(line.split(",")(10)), line.split(",")(3).toDouble)
-    ).persist() // (roadType, severity)
+      (line.split(",")(14), (getRoadType(line.split(",")(10)), line.split(",")(3).toDouble))
+    ).persist() // (state, (roadType, severity))
 
-    accidentsByRoad.aggregateByKey((0.0, 0.0))(
-      (acc, value) => (acc._1 + value, acc._2 + 1),
-      (acc1, acc2) => (acc1._1 + acc2._1, acc1._2 + acc2._2)
-    ).map({case (roadType, (sum, count)) =>
-      (roadType, (count, sum / count))
-    }).sortBy({case (roadType, (count, avg)) =>
+    val topRoads = accidentsByRoad.groupByKey().map({case (state, roadTypes) =>
+      val severityByRoad = roadTypes.groupBy({case (roadType, severity) =>
+        roadType
+      }).map({case (roadType, roadMap) =>
+        val sumCount = roadMap.aggregate((0.0, 0))(
+          (acc, value) => (acc._1 + value._2, acc._2 + 1),
+          (acc1, acc2) => (acc1._1 + acc2._1, acc1._2 + acc2._2)
+        )
+        (roadType, sumCount._2, sumCount._1 / sumCount._2.toDouble)
+      }).toList.sortBy({case (roadType, count, sev) => -count})
+
+      (state, severityByRoad)
+    }).persist()
+
+    // For the top 5 states with the most accidents, which types of roads do most of them occur and how severe are they?
+    topStates.join(topRoads).sortBy({case (state, (count, roadTypes)) =>
       -count
-    }).collect().foreach({case (roadType, (sum, count)) =>
-      println(f"$roadType  ${sum.toInt} $count%.2f")
+    }).take(5).foreach({case (state, (count, roadTypes)) =>
+      var result = state + " " + count
+      roadTypes.foreach({case (roadType, count, sev) =>
+        result = result + f", ($roadType, $count, $sev%.2f)"
+      })
+
+      println(result)
     })
+
   }
 }
