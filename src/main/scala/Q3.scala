@@ -1,3 +1,5 @@
+package csc369FinalProject
+
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.{SparkConf, SparkContext}
 
@@ -9,12 +11,12 @@ object Q3 {
     val conf = new SparkConf().setAppName("NameOfApp").setMaster("local[4]")
     val sc = new SparkContext(conf)
 
-    val accidents = sc.textFile("accidents.csv")
+    val accidents = sc.textFile("input/accidents.csv")
     val header = accidents.first()
     // filter accidents before 2017 since data doesn't start at beginning of year (Feb 2016 as opposed to Jan (skews data w/o all months))
     val filteredAccidents = accidents.filter(line => line != header)
       .filter(line => line.split(",")(4).substring(0, 4).toInt > 2016)
-    val severeAccidents = filteredAccidents.filter(line => line.split(",")(3).toDouble > 2).persist()
+    val severeAccidents = filteredAccidents.filter(line => line.split(",")(3).toDouble > 3).persist()
     val numAccidents = filteredAccidents.count() // total accidents
     val avgAccidents = numAccidents / (365 * 2)  // average number of accidents per day
 
@@ -62,22 +64,21 @@ object Q3 {
     // ------ ------ ------
     */
 
-    println("\nWhat hours have the most accidents with severity above 2?" +
+    println("\nWhat hours have the most accidents?" +
             "\n(hour, # of accidents)")
-    severeAccidents.map(line => (line.split(",")(4).substring(11, 13).toInt, 1))
+    filteredAccidents.map(line => (line.split(",")(4).substring(11, 13).toInt, 1))
       // (hour, 1)
       .reduceByKey(_ + _)
       .sortBy(p => p._2, ascending = false)
       .collect()
       .take(5)
       .foreach(println)
-    // hours with most crashes are 8am and 5pm followed by 7am and 6pm
+    // hours with most crashes are 8am and 7am followed by 5pm and 4pm
     // possible correlation: more people going to and from work = more drivers = peak traffic = more chances of an accident
 
     println("\nWhat hours have most accidents with severity at 4?" +
             "\n(hour, # of accidents)")
-    severeAccidents.filter(line => line.split(",")(3).toDouble == 4)
-      .map({line =>
+    severeAccidents.map({line =>
       val splits = line.split(",")
       // (hour, 1)
       (splits(4).substring(11, 13).toInt, 1)
