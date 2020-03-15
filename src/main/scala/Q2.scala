@@ -16,7 +16,7 @@ object Q2 {
     val conf = new SparkConf().setAppName("NameOfApp").setMaster("local[4]")
     val sc = new SparkContext(conf)
 
-    val accidents = sc.textFile("input/accidents.csv")
+    val accidents = sc.textFile("accidents.csv")
 
     // Gather data into 4 RDDs:
     // - All
