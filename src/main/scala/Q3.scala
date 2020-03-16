@@ -16,7 +16,7 @@ object Q3 {
     val header = accidents.first()
     // filter accidents before 2017 since data doesn't start at beginning of year (Feb 2016 as opposed to Jan (skews data w/o all months))
     val filteredAccidents = accidents.filter(line => line != header)
-      .filter(line => line.split(",")(4).substring(0, 4).toInt > 2016)
+      .filter(line => line.split(",")(4).substring(0, 4).toInt > 2016).persist()
     val severeAccidents = filteredAccidents.filter(line => line.split(",")(3).toDouble > 3).persist()
     val numAccidents = filteredAccidents.count() // total accidents
     val avgAccidents = numAccidents / (365 * 2)  // average number of accidents per day
