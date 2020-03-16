@@ -20,9 +20,6 @@ object Visualize {
     val conf = new SparkConf().setAppName("NameOfApp").setMaster("local[4]")
     val sc = new SparkContext(conf)
 
-    // [1]ID,[2]Source,[3]Severity,[4]Start_Time,[5]End_Time,[6]Start_Lat,[7]Start_Lng,[8]Description,[9]Number,
-    // [10]Street,[11]Side,[12]City,[13]County,[14]State,[15]Temperature(F),[16]Humidity(%),[17]Visibility(mi),
-    // [18]Wind_Speed(mph),[19]Precipitation(in)
     val accidents_file = sc.textFile(infile)
 
     val header = accidents_file.first()
@@ -32,6 +29,7 @@ object Visualize {
       .map({
         (line) =>
           val l = line.split(",")
+          // long,lat
           ((l(8).toDouble,l(7).toDouble),l(4).toInt)
       })
       .collect
