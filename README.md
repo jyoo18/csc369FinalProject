@@ -9,6 +9,7 @@ Is there a correlation between the type of road and the severity of the accident
 
 Q2: Does the natural language description of the accident entail how severe the accident is? Does this differ by API sources?
 
-Q3:
+Q3: What days of the year have most accidents? 
+Similarly, what hours of the day are most accident prone and which hours have the highest overall accident severity?
 
 Q4:
