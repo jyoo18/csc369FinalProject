@@ -12,18 +12,18 @@ object Q4 {
   def analyze(sc: SparkContext, infile: String, is_road: Boolean): Unit = {
     val accidents_file = sc.textFile(infile)
     val header = accidents_file.first()
-    // [1]ID,[2]Source,[3]Severity,[4]Start_Time,[5]End_Time,[6]Start_Lat,[7]Start_Lng,[8]Description,[9]Number,
-    // [10]Street,[11]Side,[12]City,[13]County,[14]State,[15]Temperature(F),[16]Humidity(%),[17]Visibility(mi),
-    // [18]Wind_Speed(mph),[19]Precipitation(in)
+
     val accidents = accidents_file
       .filter(_ != header)
       .map({
         (line) =>
           val l = line.split(",")
           if (is_road) {
+            // source, road type
             ((l(2), getRoadType(l(14))), 1)
           }
           else {
+            // source, severity
             ((l(2), l(4)), 1)
           }
       })
