@@ -5,3 +5,7 @@ Kevin:
 Joulien: 3/14/20 - 1 hour - Write code to find correlation between number of crashes / crash severities and different times of the year / day
 	 3/15/20 - 5 hours - Continued work on code and work on presentation/report
 Tyler:
+    3/13/20 - 2 hours - Finding a visualization library and using it to create a map of accidents
+    3/15/20 - 2 hours - Analyzing the relationship between reporting source and severity as well as source and road type
+    3/15/20 - 2 hours - Writing presentation and report
+
