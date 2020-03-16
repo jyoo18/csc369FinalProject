@@ -1,14 +1,20 @@
-Derek: 	3/11/20 - 2 hours - Write code to find correlation between severity and description
-	3/12/20 - 2 hours - Work on presentation
-	3/15/20 - 2 hour - Work on presentation & report
-Kevin: 3/12/20 - 1 hours - Write code to find states and road types with highest number of accidents
-       3/13/20 - 2 hours - Change code to find highest number of accidents by road type within top 5 states with the most accidents
-       3/14/20 - 1 hour - Add slides to presentation
-       3/15/20 - .5 hour - Add to log and report
-Joulien: 3/14/20 - 1 hour - Write code to find correlation between number of crashes / crash severities and different times of the year / day
-	 3/15/20 - 5 hours - Continued work on code and work on presentation/report
+Derek:
+3/11/20 - 2 hours - Write code to find correlation between severity and description
+3/12/20 - 2 hours - Work on presentation
+3/15/20 - 2 hour - Work on presentation & report
+
+Kevin:
+3/12/20 - 1 hours - Write code to find states and road types with highest number of accidents
+3/13/20 - 2 hours - Change code to find highest number of accidents by road type within top 5 states with the most accidents
+3/14/20 - 1 hour - Add slides to presentation
+3/15/20 - .5 hour - Add to log and report
+
+Joulien:
+3/14/20 - 1 hour - Write code to find correlation between number of crashes / crash severities and different times of the year / day
+3/15/20 - 5 hours - Continued work on code and work on presentation/report
+
 Tyler:
-    3/13/20 - 2 hours - Finding a visualization library and using it to create a map of accidents
-    3/15/20 - 2 hours - Analyzing the relationship between reporting source and severity as well as source and road type
-    3/15/20 - 2 hours - Writing presentation and report
+3/13/20 - 2 hours - Finding a visualization library and using it to create a map of accidents
+3/15/20 - 2 hours - Analyzing the relationship between reporting source and severity as well as source and road type
+3/15/20 - 2 hours - Writing presentation and report
 
