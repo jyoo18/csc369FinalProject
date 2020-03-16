@@ -1,6 +1,6 @@
 Derek: 	3/11/20 - 2 hours - Write code to find correlation between severity and description
 	3/12/20 - 2 hours - Work on presentation
-	3/15/20 - 1 hour - Work on presentation & report
+	3/15/20 - 2 hour - Work on presentation & report
 Kevin: 
 Joulien: 3/14/20 - 1 hour - Write code to find correlation between number of crashes / crash severities and different times of the year / day
 	 3/15/20 - 5 hours - Continued work on code and work on presentation/report
