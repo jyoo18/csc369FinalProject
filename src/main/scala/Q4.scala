@@ -9,17 +9,9 @@ import layout._
 import Plotly._
 
 object Q4 {
-  def main(args: Array[String]): Unit = {
-    Logger.getLogger("org").setLevel(Level.OFF)
-    Logger.getLogger("akka").setLevel(Level.OFF)
-
-    val conf = new SparkConf().setAppName("NameOfApp").setMaster("local[4]")
-    val sc = new SparkContext(conf)
-
-    val accidents_file = sc.textFile("big_accidents.csv")
-
+  def analyze(sc: SparkContext, infile: String, is_road: Boolean): Unit = {
+    val accidents_file = sc.textFile(infile)
     val header = accidents_file.first()
-
     // [1]ID,[2]Source,[3]Severity,[4]Start_Time,[5]End_Time,[6]Start_Lat,[7]Start_Lng,[8]Description,[9]Number,
     // [10]Street,[11]Side,[12]City,[13]County,[14]State,[15]Temperature(F),[16]Humidity(%),[17]Visibility(mi),
     // [18]Wind_Speed(mph),[19]Precipitation(in)
@@ -28,32 +20,43 @@ object Q4 {
       .map({
         (line) =>
           val l = line.split(",")
-          ((l(2),getRoadType(l(14))),1)
+          if (is_road) {
+            ((l(2), getRoadType(l(14))), 1)
+          }
+          else {
+            ((l(2), l(4)), 1)
+          }
       })
 
-    val by_source_and_road = accidents
+    // Reduce to the form ((reporting source, road type),# of incidents)
+    val by_source_and_group = accidents
       .reduceByKey(_ + _)
 
-    val by_source = by_source_and_road
+    // Reduce to the form (reporting source,# of incidents)
+    val by_source = by_source_and_group
       .map({
         case ((src,_),total) => (src,total)
       })
       .reduceByKey(_ + _)
 
-    val distribution = by_source_and_road
+    // Join the sub totals to the total to find the proportion of incidents
+    // on each road type
+    val distribution = by_source_and_group
       .cartesian(by_source)
       .filter({
         case (((src1,_),_),(src2,_)) => src1 == src2
       })
       .map({
-        case (((src,road),subtotal),(_,total)) => ((src,road),subtotal.toDouble / total)
+        case (((src,group),subtotal),(_,total)) => ((src,group),subtotal.toDouble / total)
       })
       .collect
 
+    // Show the output
     distribution
       .sorted
       .foreach(println)
 
+    // Create separate bar graphs for each source and road type
     val bars = by_source
       .map({
         case (src,_) => src
@@ -67,8 +70,9 @@ object Q4 {
               case ((src1,_),_) => src == src1
             })
             .map({
-              case ((_,road),prop) => (road,prop)
+              case ((_,group),prop) => (group,prop)
             })
+            .sorted
           Bar(
             x = data.map(_._1).toList,
             y = data.map(_._2).toList,
@@ -76,6 +80,7 @@ object Q4 {
           )
       })
 
+    // configure graph layout
     val aspect = 10.0 / 6
     val height = 800
     val width = (height * aspect).toInt
@@ -83,15 +88,31 @@ object Q4 {
       barmode = BarMode.Group,
       height = height,
       width = width,
-      title = "Percentage of Road Types by Source"
+      title = if (is_road) "Percentage of Road Types by Source" else "Percentage of Severity by Source"
     )
 
+    // Show the plot
     Plotly.plot(
-      path = "src_rdway.html",
+      path = if (is_road) "src_rdway.html" else "src_severity.html",
       traces = bars,
       layout = layout,
       addSuffixIfExists = false,
       openInBrowser = false
     )
+  }
+
+  def main(args: Array[String]): Unit = {
+    require(args.length == 1, "Usage: Q4 <infile>")
+
+    val infile = args(0)
+
+    Logger.getLogger("org").setLevel(Level.OFF)
+    Logger.getLogger("akka").setLevel(Level.OFF)
+
+    val conf = new SparkConf().setAppName("NameOfApp").setMaster("local[4]")
+    val sc = new SparkContext(conf)
+
+    analyze(sc, infile, true)
+    analyze(sc, infile, false)
   }
 }
